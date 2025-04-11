@@ -7,22 +7,22 @@ tdata Inicializa(int n){
 		case 2:
 			nvo=(tdata)malloc(sizeof(struct datatype));
 			nvo->tipo=n;
-			printf("Elegi el dato wachin: ");
+			printf("Elegi el dato: ");
 			scanf("%d",&n);
 			fflush(stdin);
 			nvo->sig=NULL;
 			nvo->dato=Inicializa(n);
-			printf("\nLis");
+			printf("\nLis");//Debugg
 			break;
 		case 3:
 			nvo=(tdata)malloc(sizeof(struct datatype));
 			nvo->tipo=n;/*print y scan*/
-			printf("Elegi el dato wachin: ");
+			printf("Elegi el dato: ");
 			scanf("%d",&n);
 			fflush(stdin);
 			nvo->sig=NULL;
 			nvo->dato=Inicializa(n);
-			printf("\nSet");
+			printf("\nSet");//Debugg
 			break;
 		}
 	}else{
@@ -31,7 +31,7 @@ tdata Inicializa(int n){
 		nvo->dato=load();
 		fflush(stdin);
 		nvo->sig=NULL;
-		printf("\nStr");
+		printf("\nStr");//Debugg
 	}
 	return nvo;
 }
