@@ -18,32 +18,35 @@ void ingresoporcola(str *Cadena, str nodo){
 		}
 		temp->sig=nodo;
 	}
-}
+}	
 str load(){
 	str nodo,cabeza;
 	cabeza=NULL;
 	char c;
 	printf("\nIngresar cadena:");
 	c=getchar();
-	while(c!='\n'){
+	while(c!='\n'&&c!=EOF&&c>= 32 && c<= 126){
 		nodo=create(c);
 		ingresoporcola(&cabeza, nodo);
 		c=getchar();
 	}
 	return cabeza;
 }
-void print(str cab){
-	str aux;
-	aux=cab;
-	if(aux==NULL){
-		printf("\nLista Vacia");
-	}else{
-		while(aux!=NULL){
-			printf("%c", aux->car);
-			aux=aux->sig;
+	void print(str cab){
+		str aux = cab;
+		if (aux == NULL) {
+			printf("\nLista Vacia");
+		} else {
+			while (aux != NULL) {
+				if (aux->car >= 32 && aux->car <= 126) {  // caracteres imprimibles
+					printf("%c", aux->car);
+				} else {
+					printf("[?]"); // marca caracteres no imprimibles
+				}
+				aux = aux->sig;
+			}
 		}
 	}
-}
 int pertenece(str L,char c){
 	while(L!=NULL){
 		if(L->car==c){

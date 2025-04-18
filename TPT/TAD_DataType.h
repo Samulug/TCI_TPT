@@ -21,4 +21,5 @@ typedef struct datatype* tdata;
 
 tdata Inicializa(int);
 void MostrarConj(tdata Cj);
+tdata CreaLista(int);
 #endif
