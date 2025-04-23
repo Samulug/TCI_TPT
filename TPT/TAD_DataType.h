@@ -20,6 +20,7 @@ struct datatype{
 typedef struct datatype* tdata;
 
 tdata Inicializa(int);
-void MostrarConj(tdata Cj);
+void MostrarConj(tdata);
 tdata CreaLista(int);
+tdata Operaciones(tdata,tdata);
 #endif

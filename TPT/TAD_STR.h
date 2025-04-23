@@ -19,4 +19,5 @@ str Union(str,str);
 str interseccion(str,str);
 str diferencia(str,str);
 str depuraStr(str,char);
+int ComparaStr(str,str);
 #endif

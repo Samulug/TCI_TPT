@@ -56,6 +56,17 @@ int pertenece(str L,char c){
 	}
 	return 0;
 }
+int ComparaStr(str a,str b){
+	while (a!=NULL&&b!=NULL){
+		if (a->car!=b->car){
+			return 0;
+		}
+		a=a->sig;
+		b=b->sig;
+	}
+	if(a==NULL&&b==NULL)return 1;
+	else return 0;
+}
 					
 str Union(str a, str b){
 	str c, aux,nvo;
