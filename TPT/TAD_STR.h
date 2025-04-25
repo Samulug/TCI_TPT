@@ -1,7 +1,8 @@
-#ifndef TAD_STR_H
-#define TAD_STR_H
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef STRING_H
+#define STRING_H
 typedef struct nodo{
 	char car;
 	struct nodo *sig;
@@ -19,5 +20,4 @@ str Union(str,str);
 str interseccion(str,str);
 str diferencia(str,str);
 str depuraStr(str,char);
-int ComparaStr(str,str);
 #endif

@@ -1,4 +1,5 @@
 #include "TAD_STR.h"
+
 str create(char c){
 	str nvo;
 	nvo=(str)malloc(sizeof(RNodo));
@@ -8,8 +9,8 @@ str create(char c){
 }
 	
 void ingresoporcola(str *Cadena, str nodo){
-	str temp;
-	if(*Cadena==NULL){
+str temp;
+if(*Cadena==NULL){
 		*Cadena=nodo;
 	}else {
 		temp=*Cadena;
@@ -18,35 +19,32 @@ void ingresoporcola(str *Cadena, str nodo){
 		}
 		temp->sig=nodo;
 	}
-}	
+}
 str load(){
 	str nodo,cabeza;
 	cabeza=NULL;
 	char c;
 	printf("\nIngresar cadena:");
 	c=getchar();
-	while(c!='\n'&&c!=EOF&&c>= 32 && c<= 126){
+	while(c!='\n'){
 		nodo=create(c);
 		ingresoporcola(&cabeza, nodo);
 		c=getchar();
 	}
 	return cabeza;
 }
-	void print(str cab){
-		str aux = cab;
-		if (aux == NULL) {
-			printf("\nLista Vacia");
-		} else {
-			while (aux != NULL) {
-				if (aux->car >= 32 && aux->car <= 126) {  // caracteres imprimibles
-					printf("%c", aux->car);
-				} else {
-					printf("[?]"); // marca caracteres no imprimibles
-				}
-				aux = aux->sig;
-			}
+void print(str cab){
+	str aux;
+	aux=cab;
+	if(aux==NULL){
+		printf("\nLista Vacia");
+	}else{
+		while(aux!=NULL){
+			printf("%c", aux->car);
+			aux=aux->sig;
 		}
 	}
+}
 int pertenece(str L,char c){
 	while(L!=NULL){
 		if(L->car==c){
@@ -55,17 +53,6 @@ int pertenece(str L,char c){
 		L=L->sig;
 	}
 	return 0;
-}
-int ComparaStr(str a,str b){
-	while (a!=NULL&&b!=NULL){
-		if (a->car!=b->car){
-			return 0;
-		}
-		a=a->sig;
-		b=b->sig;
-	}
-	if(a==NULL&&b==NULL)return 1;
-	else return 0;
 }
 					
 str Union(str a, str b){
@@ -78,12 +65,13 @@ str Union(str a, str b){
 		if(rta==0){
 			nvo=create(aux->car);
 			ingresoporcola(&c,nvo);
-			}
-			aux=aux->sig;
-		}	
-		aux=b;
-		while(aux!=NULL){
-			rta=pertenece(c,aux->car);
+		}
+		aux=aux->sig;
+	}	
+	aux=b;
+	
+	while(aux!=NULL){
+		rta=pertenece(c,aux->car);
 		if(rta==0){
 			nvo=create(aux->car);
 			ingresoporcola(&c,nvo);
@@ -92,6 +80,7 @@ str Union(str a, str b){
 	}
 	return c;
 }
+	
 str interseccion(str a, str b){
 	str c,aux,nvo;
 	int rta;
@@ -107,6 +96,7 @@ str interseccion(str a, str b){
 	}
 	return c;
 }
+	
 str diferencia(str a, str b){
 	str c,aux,nvo;
 	int rta;
@@ -122,12 +112,15 @@ str diferencia(str a, str b){
 	}
 	return c;
 }
-
+	
 int pertenece2(char L,char c){
 	if(L==c){
 		return 1;
-	}else return 0;
+	}else{
+	   return 0;
+	}  
 }
+	
 str depuraStr(str a, char tk){
 	str nvo,aux,c;
 	int rta;
@@ -146,3 +139,19 @@ str depuraStr(str a, char tk){
 	}
 	return c;
 }
+	
+int ComparaStr(str a,str b){
+	
+	while (a!=NULL&&b!=NULL){
+		if (a->car!=b->car){
+			return 0;
+		}
+		a=a->sig;
+		b=b->sig;
+	}
+	if(a==NULL&&b==NULL)
+		   return 1;
+	else 
+		return 0;
+}
+
