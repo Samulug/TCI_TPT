@@ -27,5 +27,10 @@ void MostrarConj(tdata);
 void show(tdata);
 tdata CreaConj();
 tdata CreaLista(int);
-tdata Operaciones(tdata,tdata);
+void Operaciones(tdata,tdata);
+int DetD(tdata);
+void acepta(tdata,str,str,tdata);
+tdata creaStrHard(const char *s);// Crea un tdata tipo=1 a partir de un literal C
+tdata creaListaHard(int,  char *items[]);// Crea un tdata tipo=2 (lista) a partir de un array de literales
+tdata creaConjHard(int n, tdata items[]);// Crea un tdata tipo=3 (conjunto) a partir de un array de tdata
 #endif

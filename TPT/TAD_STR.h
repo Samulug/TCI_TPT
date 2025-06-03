@@ -11,7 +11,8 @@ typedef struct nodo{
 typedef RNodo *str;
 
 str create(char);
-str load2(const char*);
+str load2(const char*);// Crea STR a partir de un char
+str cloneStr(const str);// Clona un STR
 str load();
 void print(str);
 str concat(str, str);
@@ -20,4 +21,5 @@ str Union(str,str);
 str interseccion(str,str);
 str diferencia(str,str);
 str depuraStr(str,char);
+
 #endif

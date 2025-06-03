@@ -7,6 +7,7 @@ tdata InterConj(int);
 tdata Inicializa(int n){
 	tdata nvo;
 	int subtipo,cant;
+	fflush(stdin);
 	if(n!=1){
 		switch(n){
 		case 2:
@@ -42,13 +43,33 @@ tdata Inicializa(int n){
 void showlis(tdata Cj){ 
 tdata aux;
 	if(Cj!=NULL){
-		aux=Cj->dato;
+		if(Cj->tipo==1){
+			aux=Cj;
+		}
+		else{
+			aux=Cj->dato;
+		}
 		show(aux);
 		if(Cj->sig!=NULL)printf(",");
 			showlis(Cj->sig);
 	}
 }
 
+void showconj(tdata Cj){
+	tdata aux;
+		if(Cj!=NULL){
+			if(Cj->tipo==1){
+				aux=Cj;
+			}
+			else{
+				aux=Cj->dato;
+			}
+			show(aux);
+			if(Cj->sig!=NULL)printf(","); 
+				showconj(Cj->sig);
+			
+		}
+}
 void show(tdata Cj){
 	if(Cj->tipo!=1){
 		switch(Cj->tipo){
@@ -59,7 +80,7 @@ void show(tdata Cj){
 			break;
 		case 3:
 			printf("{");
-			show(Cj->dato);
+			showconj(Cj->dato);
 			printf("}");
 			break;
 		}
@@ -69,7 +90,7 @@ void show(tdata Cj){
 	}
 }
 void MostrarConj(tdata Cj){
-	printf("\n{");
+	printf("{");
 	while(Cj!=NULL){
 		show(Cj);
 		if(Cj->sig!=NULL) printf(",");
@@ -141,33 +162,50 @@ tdata copiaconj(tdata A){
 	return C;
 }
 	
-int ComparaElem(tdata A, tdata B){
-	tdata pivot,aux; int band;
-	pivot=A;
-	aux=B;
-	while(pivot!=NULL){
-		while(aux!=NULL){
-			if(aux->tipo==pivot->tipo){
-	//			printf("\nHAY LISTAS");
-				band=ComparaStr(pivot->dato,aux->dato);
-				if(band==1){
-					if(pivot==NULL){
-						return 1;
-					}
-	//				printf("\nSON IGUALES LOS STR");
-					pivot=pivot->sig;
-				}else{
-	//				printf("\nNO SON IGUALES LOS STR");
-					return -1;
-				}
-			}else return -1;
-			aux=aux->sig;
+int ComparaElem(tdata A,tdata B){
+	int band;
+	band=0;
+	tdata aux,pivot;
+	if(A->tipo==B->tipo){
+		switch(A->tipo){
+		case 1:
+			band=ComparaStr(A,B);
+			if(band==1){
+				printf("\nMISMOS STR");
+				return 1;
+			}
+			else{
+				printf("\nNO SON MISMOS STR");
+				return -1;
+			}
+			break;
+		case 2:
+			pivot=A;
+			aux=B;
+			while(pivot!=NULL&&aux!=NULL&&band!=-1){
+				band=ComparaElem(aux->dato,pivot->dato);
+				aux=aux->sig;
+				pivot=pivot->sig;
+			}
+			if(pivot==NULL&&aux==NULL&&band==1)return 1;
+			else return -1;
+			break;
+		case 3:
+			pivot=A;
+			aux=B;
+			while(pivot!=NULL&&aux!=NULL&&band!=-1){
+				band=ComparaElem(pivot->dato,aux->dato);
+				aux=aux->sig;
+				pivot=pivot->sig;
+			}
+			if(pivot==NULL&&aux==NULL&&band==1)return 1;
+			else return -1;
+			break;
 		}
-		aux=B;
-		if(pivot!=NULL)pivot=pivot->sig;
-		else return 1;
+	}else{
+		print("No son los mismos tipo, pa q entras");
+		return -1;
 	}
-	return -1;
 }
 	
 void ingresoporcola1(tdata *lista, tdata nuevo){
@@ -192,15 +230,12 @@ tdata InterseccionConj(tdata A, tdata B){
 			if(aux->tipo==pivot->tipo){
 				
 				if(aux->tipo==1){
-//					printf("Son str\n");
 					band=ComparaStr(pivot,aux);
 				}
 				else{
-	//				printf("\nSon iguales");
 					band=ComparaElem(pivot->dato,aux->dato);
 				}
 				if(band==1){
-	//				printf("\nsi son");
 					temp=(tdata)malloc(sizeof(struct datatype));
 					temp->tipo=pivot->tipo;
 					temp->dato=aux->dato;
@@ -210,7 +245,6 @@ tdata InterseccionConj(tdata A, tdata B){
 				}else printf("\nNO SON");
 				printf("bandera: %d\n",band);
 			}	
-//			printf("\nIterando B: ");
 			show(aux);
 			aux=aux->sig;
 		}
@@ -230,23 +264,20 @@ tdata unionConj(tdata a,tdata b){
 	aux=a;
 	
 	while(aux!=NULL){
-		
 		nvo=(tdata)malloc(sizeof(struct datatype));
 		nvo->tipo = aux->tipo;
 		nvo->dato = aux->dato; 
 		nvo->sig = NULL; 
 		ingresoporcola1(&c, nvo);
 		aux=aux->sig; 
-	}
-	
-	//c=copiaconj(a);
+	}               //c=copiaconj(a);
 	aux=b;
 	while(aux!=NULL){
 		mov=c;
 		while(mov!=NULL && band!=-1){
 			if(aux->tipo==mov->tipo){
 				if(aux->tipo==1){
-					band=ComparaStr(aux->dato,mov->dato);
+					band=ComparaStr(aux,mov);
 				}
 				else{
 					band=ComparaElem(aux->dato,mov->dato);
@@ -307,7 +338,9 @@ void eliminaElemento(tdata *A){
 	ant=NULL;
 	while(aux!=NULL&&band!=1){
 		if(aux->tipo==nvo->tipo){
-			band=ComparaElem(aux,nvo);
+			if(aux->tipo==1){
+				band=ComparaElem(aux,nvo);
+			}else band=ComparaElem(aux->dato,nvo->dato);
 		}
 		if(band!=1){
 			ant=aux;
@@ -315,7 +348,12 @@ void eliminaElemento(tdata *A){
 		}
 	}
 	if(band==1){
-		if(aux==NULL) ant->sig=NULL; 
+		if(aux==NULL){
+			ant->sig=NULL;
+		}
+		else if (ant==NULL){
+			(*A)=aux->sig;
+		}
 		else ant->sig=aux->sig;
 		printf("\nElemento Eliminado");
 	}else printf("\nEl elemento no se encuentra en el Conjunto");
@@ -363,7 +401,6 @@ tdata diferenciaConj(tdata A, tdata B){
 		while(aux!=NULL && band!=1){
 			printf("\nIterando C: ");
 			show(aux);
-			
 			if(pivot->tipo==aux->tipo){
 				if(aux->tipo==1){
 					band=ComparaStr(aux->dato,pivot->dato);
@@ -372,21 +409,16 @@ tdata diferenciaConj(tdata A, tdata B){
 					printf("\ntipo:%d",aux->tipo);
 					band=ComparaElem(pivot,aux);
 				}
-				
 			}
 			if(band!=1){
 				ant=aux;
 				aux=aux->sig;
 			}
 		}
-		
 		if(band==1){
-			if(ant==NULL)
-				c=aux->sig;
-			else 
-				ant->sig=aux->sig;
+			if(ant==NULL)c=aux->sig;
+			else ant->sig=aux->sig;
 		}
-		
 		pivot=pivot->sig;
 		band=-1;
 	}
@@ -395,30 +427,36 @@ tdata diferenciaConj(tdata A, tdata B){
 	
 	
 void opciones(){
-	printf("Menu\n[1] para mostrar la intersección\n[2] para mostrar la unión\n[3] para mostrar la diferencia\n[4] para mostrar la cardinalidad de A\n[5] para ver la pertenencia en A\n[6] para ver la contención en A\n[7] para eliminar un elemento de A ");
+	printf("\nMenu\n[1] para mostrar la intersección\n[2] para mostrar la unión\n[3] para mostrar la diferencia\n[4] para mostrar la cardinalidad de A\n[5] para ver la pertenencia en A\n[6] para ver la contención en A\n[7] para eliminar un elemento de A ");
 }
-	
-tdata Operaciones(tdata A,tdata B){
+void Operaciones(tdata A,tdata B){
 	tdata C; int n,cardinal;
 	C=(tdata)malloc(sizeof(struct datatype));
 	C->tipo=3;
 	C->sig=NULL;
 	
-	//opciones();
+	opciones();
 	printf("\nElige que operacion Hacer;");
 	scanf("%d",&n);
-	switch(n){
+	while(n!=0){
+		C=(tdata)malloc(sizeof(struct datatype));
+		C->tipo=3;
+		C->sig=NULL;
+		switch(n){
 		case 1:
 			printf("\ningreso a interseccion");
-			C->dato=InterseccionConj(A->dato,B->dato); //ok
+			C->dato=InterseccionConj(A->dato,B->dato);//ok
+			MostrarConj(C->dato);
 			break;
 		case 2:
 			printf("\ningreso a Union");
 			C->dato=unionConj(A->dato,B->dato);		//ok
+			MostrarConj(C->dato);
 			break;
 		case 3:
 			printf("\ningreso a Diferencia");
 			C->dato=diferenciaConj(A->dato,B->dato);//OK
+			MostrarConj(C->dato);
 			break;
 		case 4:
 			printf("\ningreso a Contar Elementos");
@@ -441,8 +479,280 @@ tdata Operaciones(tdata A,tdata B){
 		default:
 			printf("opcion invalida\n");
 			break;
+		}
+		opciones();
+		printf("\nElige que operacion Hacer;");
+		scanf("%d",&n);
 	}
-		
-	return C;
 }
 	
+int DetD(tdata d){
+	int ban=0;
+	tdata aux,nvo;
+	aux=d->dato;
+	while(aux!=NULL && ban!=3){
+		nvo=aux->dato;
+		while(nvo!=NULL && ban!=3){
+			printf("\n %d", nvo->dato->tipo);
+			if(nvo->dato->tipo==3)
+				ban=3;
+			else
+			nvo=nvo->sig;
+		}
+		aux=aux->sig;
+	}
+	if(ban==3)
+		return -1;
+	else
+		return 1;
+}
+	
+
+int comparacys(str cad,char c){
+	printf("\n Caracteres que estoy comparando: %c y %c\n",cad->car,c);
+	if(cad->car==c){
+		return 1;
+	}
+	else{
+		return -1;
+	}
+}
+	
+/*str Busca(tdata lis, str q,char c){
+	int b;
+	str aux=NULL;
+	printf("Busca, lista: ");         //(q0,0,q1)
+	MostrarConj(lis->sig->sig->dato); //lis->dato =(q0) lis->sig->dato=(0) lis->sig->sig->dato=(q1)
+	printf("Muestra antes de comparar\n");
+	print(lis);
+	print(q);
+	b=ComparaStr(lis->dato->dato,q); //lis->dato->dato=q0
+	printf("%d\n",b);
+	if(b==1){
+		printf("IGUALES\n");
+		print(lis->sig->sig->dato);
+		aux=lis->sig->sig->dato->dato;
+		print(aux);
+		printf("Tipo de la transision: %d\n",lis->sig->sig->dato->tipo);
+		if(comparacys(lis->sig->dato->dato,c)){ //revisar lis->sig->dato->dato=str 0 Hacer otro modulo p comp str y char
+			printf("Los caracteres son iguales\n");
+			return aux;  //lis->sig->sig->dato->dato=str q1
+		}
+		else{
+			return NULL;
+		}
+	}
+	else{
+		printf("No compara str\n");
+		return NULL;
+	}
+}
+	
+str obtenerq(tdata D, str q, char c){
+	str b=NULL;
+	printf("Mostrar mi conjunto D:\n");
+	MostrarConj(D);
+	printf("obtenerq\n");
+	while(D!=NULL && b==NULL){
+		printf("Ciclo\n");
+		b=Busca(D->dato,q,c); //q1
+		printf("Valor de b en obtenerq: ");
+		print(b);
+		D=D->sig;
+	}
+	if(b!=NULL){
+		return b;
+	}
+	else{
+		return NULL;
+	}
+}
+	
+	
+int pertenencia2(tdata A, str q){
+	tdata aux;
+	int b=0;
+	aux=A;
+	while (A!=NULL && b!=1){
+		
+		b=ComparaStr(A->dato,q);
+		A=A->sig;
+	}
+	if(b==1){
+		return 1;
+	}
+	else 
+	   return -1;
+}
+	
+/*void acepta(tdata D,str q, str cad,tdata F){
+	int b;
+	while(cad!=NULL && q!=NULL){
+		q=obtenerq(D,q,cad->car);
+		print(q);
+		cad=cad->sig;
+	}
+	
+	if(q==NULL){
+		printf("No esta definido\n");
+	}
+	else{
+		print(q);
+		b=pertenencia2(F,q);
+		if(b==1)
+			printf("Aceptada\n");
+		else
+			printf("No aceptada\n");
+	}
+}*/
+	
+int pertenencia2(tdata A, str q){
+	tdata aux;
+	int b=0;
+	aux=A;
+	while (A!=NULL && b!=1){
+		
+		b=ComparaStr(A->dato,q);
+		A=A->sig;
+	}
+	if(b==1){
+		return 1;
+	}
+	else 
+	   return -1;
+}
+str Busca(tdata lis,str q,char c){
+	int b,B;
+	str aux=NULL;
+	printf("Busca, lista: ");//(q0,0,q1)...
+	MostrarConj(lis);
+	printf("Muestra antes de comparar\n");//lis->dato =(q0) lis->sig->dato=(0) lis->sig->sig->dato=(q1)
+	print(lis); 
+	print(q);
+	b=ComparaStr(lis->dato->dato,q); //lis->dato->dato=q0
+	printf("%d\n",b);
+	if(b==1){
+		printf("IGUALES\n");
+		aux=lis->sig->sig->dato->dato;
+		print(aux);
+		B=comparacys(lis->sig->dato->dato,c); //modulo para comparar el char y un str lis->sig->dato->dato=str 0
+		printf("\nValor de comp caracteres: %d\n",B);
+		if(B==1){ 
+			printf("Los caracteres son iguales\n");
+			return aux;  //lis->sig->sig->dato->dato=str q1
+		}
+		else{
+			return NULL;
+		}
+	}
+	else{
+		printf("No compara str\n");
+		return NULL;
+	}
+}
+str obtenerq(tdata D,str q,str cadena){
+	str b=q;
+	str s; //uso dos str auxiliares
+	tdata aux; //tdata auxiliae para moverme en la lista de transiciones
+	aux=D;
+	while(aux!=NULL && cadena!=NULL){ //ciclo mientras que no consuma la cadena por completo o mi lista llegue a null
+		s=b; //guardo el valor de b que es mi estado actual
+		b=Busca(aux->dato,b,cadena->car);//"busca" analiza las tranciciones con un caracter y me retorna nulo o el sig estado
+		if(b==NULL){ //en caso de nulo significa que no coicide la 1ra transicio 
+			aux=aux->sig; //paso a la siguiente ej de (q0,0,q1) a (q0,1,q0) para volver a buscar
+			b=s;//como busca retorno nulo en b, le devuelvo el estado anterior que guardo s
+		}
+		else{ //si me devolvio un estado siguiente
+			aux=D; //reinicio mi lista y vuelvo a la primera transicion (q0,0,q1)
+			cadena=cadena->sig; //avanzo sobre mi cadena
+			printf("\nCadena que queda: ");
+			print(cadena);
+		}
+	}				//Si corto ciclo por aux!=nulo entonces la cadena no estaba definida
+	if(aux==NULL){ //Podemos fijarnos antes si toda la cadena tiene el alfabeto correcto
+		return NULL;
+	}else{
+		return b;
+	}
+	
+}
+void acepta(tdata D,str q, str cad,tdata F){
+	int b;
+	q=obtenerq(D,q,cad); //busco el estado final
+	printf("\nq obtenido: ");
+	print(q);
+
+	if(q==NULL){ //si devuelve nulo es porque la cadena no esta definida para el afd
+		printf("No esta definido\n");
+	}
+	else{
+		printf("\nEstado final obtenido: ");
+		print(q);
+		printf("\nEstado de aceptacion: ");
+		print(F);
+		b=pertenencia2(F,q);
+		if(b==1)
+			printf("Aceptada\n");
+		else
+			printf("No aceptada\n");
+	}
+}
+//------------------------------HARDCODE-----------------------------------
+
+tdata creaStrHard(const char *s){
+tdata nodoStr = malloc(sizeof(struct datatype));
+nodoStr->tipo = 1;
+nodoStr->dato = load2(s);
+nodoStr->sig = NULL;
+return nodoStr;
+}
+
+// 2) array de literales ? tdata tipo=2 (lista de cadenas)
+tdata creaListaHard(int n, char *Datos[]) {
+	if (n <= 0) return NULL;
+	
+	tdata nodoLista = malloc(sizeof(struct datatype));
+	nodoLista->tipo = 2;
+	nodoLista->sig = NULL;
+	// Creamos nodo tipo 1 con el str
+	tdata nodoStr = malloc(sizeof(struct datatype));
+	nodoStr->tipo = 1;
+	nodoStr->dato = load2(Datos[0]);  // usamos el primero
+	// Asignamos ese nodo tipo 1 como dato del nodo tipo 2
+	nodoLista->dato = nodoStr;
+	
+	// Llamada recursiva para el resto
+	nodoLista->sig = creaListaHard(n - 1, Datos + 1);
+	
+	return nodoLista;
+}
+
+
+
+// 3) array de tdata ? tdata tipo=3 (conjunto)
+tdata creaConjHard(int n, tdata items[]) {
+	tdata conj = malloc(sizeof(struct datatype));
+	conj->tipo = 3;
+	conj->sig = NULL;
+	
+	tdata primero = NULL;
+	tdata ultimo = NULL;
+	
+	for (int i = 0; i < n; i++) {
+		tdata nuevo = malloc(sizeof(struct datatype));
+		nuevo->tipo = items[i]->tipo;
+		nuevo->dato = items[i]->dato;
+		nuevo->sig = NULL;
+		
+		if (primero == NULL) {
+			primero = nuevo;
+			ultimo = nuevo;
+		} else {
+			ultimo->sig = nuevo;
+			ultimo = nuevo;
+		}
+	}
+	
+	conj->dato = primero;
+	return conj;
+}

@@ -25,6 +25,7 @@ str load(){
 	cabeza=NULL;
 	char c;
 	printf("\nIngresar cadena:");
+	fflush(stdin);
 	c=getchar();
 	while(c!='\n'){
 		nodo=create(c);
@@ -141,10 +142,11 @@ str depuraStr(str a, char tk){
 }
 	
 int ComparaStr(str a,str b){
-	
 	while (a!=NULL&&b!=NULL){
+		printf("Caracter a: %c", a->car);
+		printf("Caracter b: %c", b->car);
 		if (a->car!=b->car){
-			return 0;
+			return -1;
 		}
 		a=a->sig;
 		b=b->sig;
@@ -152,6 +154,30 @@ int ComparaStr(str a,str b){
 	if(a==NULL&&b==NULL)
 		   return 1;
 	else 
-		return 0;
+		return -1;
 }
 
+// Construye un str a partir de un literal C
+str load2(const char *s) {
+	str cabeza = NULL, nodo;
+	for (int i = 0; s[i] != '\0'; i++) {
+		nodo = create(s[i]);
+		ingresoporcola(&cabeza, nodo);
+	}
+	return cabeza;
+}
+
+// Clona profundamente un str
+str cloneStr(const str original) {
+	str cabeza = NULL, tail = NULL;
+	for (str p = original; p != NULL; p = p->sig) {
+		str nodo = create(p->car);
+		if (!cabeza) {
+			cabeza = tail = nodo;
+		} else {
+			tail->sig = nodo;
+			tail = nodo;
+		}
+	}
+	return cabeza;
+}
